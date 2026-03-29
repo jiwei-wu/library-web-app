@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Library App</title>
+</head>
+<body>
+
+<h1>Library</h1>
+
+<input id="title" placeholder="Book title">
+<button onclick="addBook()">Add Book</button>
+
+<ul id="bookList"></ul>
+
+<script>
+const API_URL = "http://localhost:8080/books";
+
+async function fetchBooks() {
+    const res = await fetch(API_URL);
+    const books = await res.json();
+
+    const list = document.getElementById("bookList");
+    list.innerHTML = "";
+
+    books.forEach(book => {
+        const li = document.createElement("li");
+        li.innerText = book.title;
+
+        const btn = document.createElement("button");
+        btn.innerText = "Delete";
+        btn.onclick = () => deleteBook(book.id);
+
+        li.appendChild(btn);
+        list.appendChild(li);
+    });
+}
+
+async function addBook() {
+    const title = document.getElementById("title").value;
+
+    await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title })
+    });
+
+    fetchBooks();
+}
+
+async function deleteBook(id) {
+    await fetch(`${API_URL}/${id}`, {
+        method: "DELETE"
+    });
+
+    fetchBooks();
+}
+
+fetchBooks();
+</script>
+
+</body>
+</html>

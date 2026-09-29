@@ -1,62 +1,38 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
 <head>
-    <title>Library App</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Library Desk</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
 </head>
 <body>
-
-<h1>Library</h1>
-
-<input id="title" placeholder="Book title">
-<button onclick="addBook()">Add Book</button>
-
-<ul id="bookList"></ul>
-
-<script>
-const API_URL = "http://localhost:8080/books";
-
-async function fetchBooks() {
-    const res = await fetch(API_URL);
-    const books = await res.json();
-
-    const list = document.getElementById("bookList");
-    list.innerHTML = "";
-
-    books.forEach(book => {
-        const li = document.createElement("li");
-        li.innerText = book.title;
-
-        const btn = document.createElement("button");
-        btn.innerText = "Delete";
-        btn.onclick = () => deleteBook(book.id);
-
-        li.appendChild(btn);
-        list.appendChild(li);
-    });
-}
-
-async function addBook() {
-    const title = document.getElementById("title").value;
-
-    await fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title })
-    });
-
-    fetchBooks();
-}
-
-async function deleteBook(id) {
-    await fetch(`${API_URL}/${id}`, {
-        method: "DELETE"
-    });
-
-    fetchBooks();
-}
-
-fetchBooks();
-</script>
-
+  <header class="masthead"><div class="wrap masthead-inner"><div class="brand"><span class="brand-mark" aria-hidden="true">◧</span> Library Desk</div><span class="badge">Circulation workspace</span></div></header>
+  <main class="wrap">
+    <section class="intro"><p class="eyebrow">LIBRARY OPERATIONS</p><h1>Keep every copy accounted for.</h1><p>Find books, register readers, and manage borrowing from one simple workspace.</p></section>
+    <p id="notice" class="notice" role="status" aria-live="polite" hidden></p>
+    <section class="layout">
+      <div class="main-column">
+        <section class="panel" aria-labelledby="catalog-title">
+          <div class="panel-heading"><div><p class="eyebrow">01 / CATALOGUE</p><h2 id="catalog-title">Books & availability</h2></div><span id="book-count" class="muted"></span></div>
+          <form id="search-form" class="search-row"><label class="sr-only" for="search">Search books by title</label><input id="search" type="search" placeholder="Search by title"><button type="submit" class="button secondary">Search</button></form>
+          <div class="table-wrap"><table><thead><tr><th>Book</th><th>ISBN</th><th>Available</th><th>Action</th></tr></thead><tbody id="book-rows"><tr><td colspan="4">Loading books…</td></tr></tbody></table></div>
+          <div class="pager"><button id="prev-page" type="button" class="button ghost">Previous</button><span id="page-label" aria-live="polite"></span><button id="next-page" type="button" class="button ghost">Next</button></div>
+        </section>
+        <section class="panel" aria-labelledby="loan-title">
+          <div class="panel-heading"><div><p class="eyebrow">02 / CIRCULATION</p><h2 id="loan-title">Borrow & return</h2></div></div>
+          <form id="borrow-form" class="form-grid"><label>Reader ID<input id="borrow-member" type="number" min="1" required placeholder="e.g. 1"></label><label>Book ID<input id="borrow-book" type="number" min="1" required placeholder="Choose from catalogue"></label><button class="button primary" type="submit">Borrow a copy</button></form>
+          <form id="history-form" class="search-row history-search"><label class="sr-only" for="history-member">Reader ID for loan history</label><input id="history-member" type="number" min="1" required placeholder="Reader ID to view loans"><button class="button secondary" type="submit">View loans</button></form>
+          <div id="loan-list" class="loans muted">Enter a reader ID to see their loans.</div>
+        </section>
+      </div>
+      <aside class="side-column">
+        <section class="panel" aria-labelledby="add-book-title"><p class="eyebrow">ADD TO CATALOGUE</p><h2 id="add-book-title">New book</h2><form id="book-form" class="stack"><label>Title<input name="title" maxlength="255" required></label><label>Author<input name="author" maxlength="255" required></label><label>ISBN<input name="isbn" maxlength="255" required></label><label>Number of copies<input name="copies" type="number" min="1" max="20" value="1" required></label><button class="button primary" type="submit">Add book</button></form></section>
+        <section class="panel" aria-labelledby="reader-title"><p class="eyebrow">MEMBERSHIP</p><h2 id="reader-title">Register a reader</h2><form id="member-form" class="stack"><label>Name<input name="name" maxlength="255" required></label><label>Email<input name="email" type="email" maxlength="255" required></label><button class="button secondary" type="submit">Register reader</button></form><p class="hint">New readers can borrow up to three books at once. Loans are due in 14 days.</p></section>
+      </aside>
+    </section>
+    <footer>Library Desk · Java, Spring Boot & a lightweight web interface</footer>
+  </main>
 </body>
 </html>
